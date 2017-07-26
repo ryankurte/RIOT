@@ -57,7 +57,7 @@ static void *_thread(void *arg)
     return NULL;
 }
 
-static void _set(thread_t *thread, thread_flags_t flags)
+static void _set(riot_thread_t *thread, thread_flags_t flags)
 {
     printf("main(): setting flag 0x%04x\n", (unsigned)flags & 0xFFFF);
     thread_flags_set(thread, flags);
@@ -75,7 +75,7 @@ int main(void)
                   NULL,
                   "second_thread");
 
-    thread_t *thread = (thread_t*) thread_get(pid);
+    riot_thread_t *thread = (riot_thread_t *) thread_get(pid);
     _set(thread, 0x1);
     _set(thread, 0x64);
     _set(thread, 0x1);

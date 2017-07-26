@@ -166,7 +166,7 @@
 /** @} */
 
 /**
- * @brief @c thread_t holds thread's context data.
+ * @brief @c riot_thread_t holds thread's context data.
  */
 struct _thread {
     char *sp;                       /**< thread's stack pointer         */
@@ -256,7 +256,7 @@ struct _thread {
  * @brief Minimum stack size
  */
 #ifndef THREAD_STACKSIZE_MINIMUM
-#define THREAD_STACKSIZE_MINIMUM  (sizeof(thread_t))
+#define THREAD_STACKSIZE_MINIMUM  (sizeof(riot_thread_t ))
 #endif
 
 /**
@@ -345,7 +345,7 @@ kernel_pid_t thread_create(char *stack,
  * @param[in]   pid   Thread to retreive.
  * @return      `NULL` if the PID is invalid or there is no such thread.
  */
-volatile thread_t *thread_get(kernel_pid_t pid);
+volatile riot_thread_t *thread_get(kernel_pid_t pid);
 
 /**
  * @brief Returns the status of a process
@@ -435,7 +435,7 @@ char *thread_stack_init(thread_task_func_t task_func, void *arg, void *stack_sta
  * @param[in] list      ptr to list root node
  * @param[in] thread    thread to add
  */
-void thread_add_to_list(list_node_t *list, thread_t *thread);
+void thread_add_to_list(list_node_t *list, riot_thread_t *thread);
 
 #ifdef DEVELHELP
 /**

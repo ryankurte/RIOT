@@ -41,7 +41,7 @@ void condition_variable::notify_one() noexcept {
   priority_queue_node_t* head = priority_queue_remove_head(&m_queue);
   int other_prio = -1;
   if (head != NULL) {
-    thread_t* other_thread = (thread_t*)sched_threads[head->data];
+    riot_thread_t* other_thread = (riot_thread_t *)sched_threads[head->data];
     if (other_thread) {
       other_prio = other_thread->priority;
       sched_set_status(other_thread, STATUS_PENDING);
@@ -62,7 +62,7 @@ void condition_variable::notify_all() noexcept {
     if (head == NULL) {
       break;
     }
-    thread_t* other_thread = (thread_t*)sched_threads[head->data];
+    riot_thread_t* other_thread = (riot_thread_t *)sched_threads[head->data];
     if (other_thread) {
       auto max_prio
         = [](int a, int b) { return (a < 0) ? b : ((a < b) ? a : b); };

@@ -196,6 +196,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <sys/uio.h>
+#include <sys/types.h>
 
 #include "net/netopt.h"
 

@@ -30,7 +30,7 @@
 #include "bitarithm.h"
 #include "sched.h"
 
-volatile thread_t *thread_get(kernel_pid_t pid)
+volatile riot_thread_t *thread_get(kernel_pid_t pid)
 {
     if (pid_is_valid(pid)) {
         return sched_threads[pid];
@@ -40,14 +40,14 @@ volatile thread_t *thread_get(kernel_pid_t pid)
 
 int thread_getstatus(kernel_pid_t pid)
 {
-    volatile thread_t *t = thread_get(pid);
+    volatile riot_thread_t *t = thread_get(pid);
     return t ? (int) t->status : STATUS_NOT_FOUND;
 }
 
 #ifdef DEVELHELP
 const char *thread_getname(kernel_pid_t pid)
 {
-    volatile thread_t *t = thread_get(pid);
+    volatile riot_thread_t *t = thread_get(pid);
     return t ? t->name : NULL;
 }
 #endif
@@ -59,7 +59,7 @@ void thread_sleep(void)
     }
 
     unsigned state = irq_disable();
-    sched_set_status((thread_t *)sched_active_thread, STATUS_SLEEPING);
+    sched_set_status((riot_thread_t *)sched_active_thread, STATUS_SLEEPING);
     irq_restore(state);
     thread_yield_higher();
 }
@@ -70,7 +70,7 @@ int thread_wakeup(kernel_pid_t pid)
 
     unsigned old_state = irq_disable();
 
-    thread_t *other_thread = (thread_t *) thread_get(pid);
+    riot_thread_t *other_thread = (riot_thread_t *) thread_get(pid);
 
     if (!other_thread) {
         DEBUG("thread_wakeup: Thread does not exist!\n");
@@ -96,7 +96,7 @@ int thread_wakeup(kernel_pid_t pid)
 void thread_yield(void)
 {
     unsigned old_state = irq_disable();
-    thread_t *me = (thread_t *)sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *)sched_active_thread;
     if (me->status >= STATUS_ON_RUNQUEUE) {
         clist_lpoprpush(&sched_runqueues[me->priority]);
     }
@@ -105,7 +105,7 @@ void thread_yield(void)
     thread_yield_higher();
 }
 
-void thread_add_to_list(list_node_t *list, thread_t *thread)
+void thread_add_to_list(list_node_t *list, riot_thread_t *thread)
 {
     assert (thread->status < STATUS_ON_RUNQUEUE);
 
@@ -113,7 +113,7 @@ void thread_add_to_list(list_node_t *list, thread_t *thread)
     list_node_t *new_node = (list_node_t*)&thread->rq_entry;
 
     while (list->next) {
-        thread_t *list_entry = container_of((clist_node_t*)list->next, thread_t, rq_entry);
+        riot_thread_t *list_entry = container_of((clist_node_t*)list->next, riot_thread_t, rq_entry);
         if (list_entry->priority > my_prio) {
             break;
         }
@@ -161,16 +161,16 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
     }
 
     /* make room for the thread control block */
-    stacksize -= sizeof(thread_t);
+    stacksize -= sizeof(riot_thread_t);
 
-    /* round down the stacksize to a multiple of thread_t alignments (usually 16/32bit) */
-    stacksize -= stacksize % ALIGN_OF(thread_t);
+    /* round down the stacksize to a multiple of riot_thread_t alignments (usually 16/32bit) */
+    stacksize -= stacksize % ALIGN_OF(riot_thread_t);
 
     if (stacksize < 0) {
         DEBUG("thread_create: stacksize is too small!\n");
     }
     /* allocate our thread control block at the top of our stackspace */
-    thread_t *cb = (thread_t *) (stack + stacksize);
+    riot_thread_t *cb = (riot_thread_t *) (stack + stacksize);
 
 #if defined(DEVELHELP) || defined(SCHED_TEST_STACK)
     if (flags & THREAD_CREATE_STACKTEST) {

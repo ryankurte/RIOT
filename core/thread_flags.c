@@ -26,7 +26,7 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
-static thread_flags_t _thread_flags_clear_atomic(thread_t *thread, thread_flags_t mask)
+static thread_flags_t _thread_flags_clear_atomic(riot_thread_t *thread, thread_flags_t mask)
 {
     unsigned state = irq_disable();
     mask &= thread->flags;
@@ -35,7 +35,7 @@ static thread_flags_t _thread_flags_clear_atomic(thread_t *thread, thread_flags_
     return mask;
 }
 
-static void _thread_flags_wait(thread_flags_t mask, thread_t *thread, unsigned threadstate, unsigned irqstate)
+static void _thread_flags_wait(thread_flags_t mask, riot_thread_t *thread, unsigned threadstate, unsigned irqstate)
 {
     DEBUG("_thread_flags_wait: me->flags=0x%08x me->mask=0x%08x. going blocked.\n",
             (unsigned)thread->flags, (unsigned)mask);
@@ -48,7 +48,7 @@ static void _thread_flags_wait(thread_flags_t mask, thread_t *thread, unsigned t
 
 thread_flags_t thread_flags_clear(thread_flags_t mask)
 {
-    thread_t *me = (thread_t*) sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *) sched_active_thread;
     mask = _thread_flags_clear_atomic(me, mask);
     DEBUG("thread_flags_clear(): pid %"PRIkernel_pid" clearing 0x%08x\n", thread_getpid(), mask);
     return mask;
@@ -56,7 +56,7 @@ thread_flags_t thread_flags_clear(thread_flags_t mask)
 
 static void _thread_flags_wait_any(thread_flags_t mask)
 {
-    thread_t *me = (thread_t*) sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *) sched_active_thread;
     unsigned state = irq_disable();
     if (!(me->flags & mask)) {
         _thread_flags_wait(mask, me, STATUS_FLAG_BLOCKED_ANY, state);
@@ -68,7 +68,7 @@ static void _thread_flags_wait_any(thread_flags_t mask)
 
 thread_flags_t thread_flags_wait_any(thread_flags_t mask)
 {
-    thread_t *me = (thread_t*) sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *) sched_active_thread;
     _thread_flags_wait_any(mask);
     return _thread_flags_clear_atomic(me, mask);
 }
@@ -76,7 +76,7 @@ thread_flags_t thread_flags_wait_any(thread_flags_t mask)
 thread_flags_t thread_flags_wait_one(thread_flags_t mask)
 {
     _thread_flags_wait_any(mask);
-    thread_t *me = (thread_t*) sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *) sched_active_thread;
     thread_flags_t tmp = me->flags & mask;
     /* clear all but least significant bit */
     tmp &= (~tmp + 1);
@@ -86,7 +86,7 @@ thread_flags_t thread_flags_wait_one(thread_flags_t mask)
 thread_flags_t thread_flags_wait_all(thread_flags_t mask)
 {
     unsigned state = irq_disable();
-    thread_t *me = (thread_t*) sched_active_thread;
+    riot_thread_t *me = (riot_thread_t *) sched_active_thread;
     if (!((me->flags & mask) == mask)) {
         DEBUG("thread_flags_wait_all(): pid %"PRIkernel_pid" waiting for %08x\n", thread_getpid(), (unsigned)mask);
         _thread_flags_wait(mask, me, STATUS_FLAG_BLOCKED_ALL, state);
@@ -98,7 +98,7 @@ thread_flags_t thread_flags_wait_all(thread_flags_t mask)
     return _thread_flags_clear_atomic(me, mask);
 }
 
-inline int __attribute__((always_inline)) thread_flags_wake(thread_t *thread)
+inline int __attribute__((always_inline)) thread_flags_wake(riot_thread_t *thread)
 {
     unsigned wakeup = 0;
     thread_flags_t mask = (uint16_t)(unsigned)thread->wait_data;
@@ -119,7 +119,7 @@ inline int __attribute__((always_inline)) thread_flags_wake(thread_t *thread)
     return wakeup;
 }
 
-void thread_flags_set(thread_t *thread, thread_flags_t mask)
+void thread_flags_set(riot_thread_t *thread, thread_flags_t mask)
 {
     DEBUG("thread_flags_set(): setting 0x%08x for pid %"PRIkernel_pid"\n", mask, thread->pid);
     unsigned state = irq_disable();

@@ -22,11 +22,15 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
+#include <sys/uio.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#if __APPLE__
+#include <sys/_types/_iovec_t.h>
+#else
 /**
  * @brief Structure for scatter/gather I/O.
  */
@@ -34,6 +38,8 @@ struct iovec {
     void *iov_base;     /**< Pointer to data.   */
     size_t iov_len;     /**< Length of data.    */
 };
+#endif
+
 
 #ifdef __cplusplus
 }

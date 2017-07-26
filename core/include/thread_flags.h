@@ -51,7 +51,7 @@
 #define THREAD_FLAGS_H
 
 #include "kernel_types.h"
-#include "sched.h"  /* for thread_t typedef */
+#include "sched.h"  /* for riot_thread_t typedef */
 
 #ifdef __cplusplus
  extern "C" {
@@ -78,7 +78,7 @@ typedef uint16_t thread_flags_t;
  * @param[in]   mask    additional flags to be set for the current thread,
  *                      represented as a bitmask
  */
-void thread_flags_set(thread_t *thread, thread_flags_t mask);
+void thread_flags_set(riot_thread_t *thread, thread_flags_t mask);
 
 /**
  * @brief Clear current thread's flags
@@ -145,7 +145,7 @@ thread_flags_t thread_flags_wait_one(thread_flags_t mask);
  * @return      1       if @p thread has been woken up
  *              0       otherwise
  */
-int thread_flags_wake(thread_t *thread);
+int thread_flags_wake(riot_thread_t *thread);
 
 #ifdef __cplusplus
 }

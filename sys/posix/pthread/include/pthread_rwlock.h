@@ -61,7 +61,7 @@ typedef struct
  */
 typedef struct {
     bool is_writer;                 /**< `false`: reader; `true`: writer */
-    thread_t *thread;               /**< waiting thread */
+    riot_thread_t *thread;               /**< waiting thread */
     priority_queue_node_t qnode;    /**< Node to store in `pthread_rwlock_t::queue`. */
     bool continue_;                 /**< This is not a spurious wakeup. */
 } __pthread_rwlock_waiter_node_t;

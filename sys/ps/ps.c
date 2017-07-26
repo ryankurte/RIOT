@@ -85,7 +85,7 @@ void ps(void)
 #endif
 
     for (kernel_pid_t i = KERNEL_PID_FIRST; i <= KERNEL_PID_LAST; i++) {
-        thread_t *p = (thread_t *)sched_threads[i];
+        riot_thread_t *p = (riot_thread_t *)sched_threads[i];
 
         if (p != NULL) {
             int state = p->status;                                                 /* copy state */

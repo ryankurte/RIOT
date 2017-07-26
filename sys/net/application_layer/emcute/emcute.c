@@ -106,7 +106,7 @@ static size_t get_len(uint8_t *buf, uint16_t *len)
 
 static void time_evt(void *arg)
 {
-    thread_flags_set((thread_t *)arg, TFLAGS_TIMEOUT);
+    thread_flags_set((riot_thread_t *)arg, TFLAGS_TIMEOUT);
 }
 
 static int syncsend(uint8_t resp, size_t len, bool unlock)
@@ -145,7 +145,7 @@ static void on_disconnect(void)
     if (waiton == DISCONNECT) {
         gateway.port = 0;
         result = EMCUTE_OK;
-        thread_flags_set((thread_t *)timer.arg, TFLAGS_RESP);
+        thread_flags_set((riot_thread_t *)timer.arg, TFLAGS_RESP);
     }
 }
 
@@ -161,7 +161,7 @@ static void on_ack(uint8_t type, int id_pos, int ret_pos, int res_pos)
         } else {
             result = EMCUTE_REJECT;
         }
-        thread_flags_set((thread_t *)timer.arg, TFLAGS_RESP);
+        thread_flags_set((riot_thread_t *)timer.arg, TFLAGS_RESP);
     }
 }
 

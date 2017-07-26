@@ -35,7 +35,7 @@
 
 typedef struct {
     mutex_t *mutex;
-    thread_t *thread;
+    riot_thread_t *thread;
     int timeout;
 } mutex_thread_t;
 
@@ -245,7 +245,7 @@ static void _mutex_timeout(void *arg)
 int xtimer_mutex_lock_timeout(mutex_t *mutex, uint64_t timeout)
 {
     xtimer_t t;
-    mutex_thread_t mt = { mutex, (thread_t *)sched_active_thread, 0 };
+    mutex_thread_t mt = { mutex, (riot_thread_t *)sched_active_thread, 0 };
 
     if (timeout != 0) {
         t.callback = _mutex_timeout;

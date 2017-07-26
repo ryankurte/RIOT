@@ -11,7 +11,7 @@
  * @{
  *
  * @file
- * @brief  Print the size of thread_t.
+ * @brief  Print the size of riot_thread_t.
  *
  * @author René Kijewski <rene.kijewski@fu-berlin.de>
  *
@@ -24,14 +24,14 @@
 #include "thread.h"
 
 #define P(NAME) printf("\t%-*s%4u%4u\n", 11, #NAME, \
-                       (unsigned)sizeof(((thread_t *) 0)->NAME), \
+                       (unsigned)sizeof(((riot_thread_t *) 0)->NAME), \
                        (unsigned)offsetof(thread_t, NAME));
 
 int main(void)
 {
     puts("\tmember, sizeof, offsetof");
 
-    printf("sizeof(thread_t): %u\n", (unsigned)sizeof(thread_t));
+    printf("sizeof(riot_thread_t): %u\n", (unsigned)sizeof(riot_thread_t));
 
     P(sp);
     P(status);

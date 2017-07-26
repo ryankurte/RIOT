@@ -92,9 +92,9 @@
 #endif
 
 /**
- * @brief forward declaration for thread_t, defined in thread.h
+ * @brief forward declaration for riot_thread_t, defined in thread.h
  */
-typedef struct _thread thread_t;
+typedef struct _thread riot_thread_t;
 
 /**
  * @def SCHED_PRIO_LEVELS
@@ -117,7 +117,7 @@ int sched_run(void);
  *                          targeted process
  * @param[in]   status      The new status of this thread
  */
-void sched_set_status(thread_t *process, unsigned int status);
+void sched_set_status(riot_thread_t *process, unsigned int status);
 
 /**
  * @brief       Yield if approriate.
@@ -147,12 +147,12 @@ extern volatile unsigned int sched_context_switch_request;
 /**
  *  Thread table
  */
-extern volatile thread_t *sched_threads[KERNEL_PID_LAST + 1];
+extern volatile riot_thread_t *sched_threads[KERNEL_PID_LAST + 1];
 
 /**
  *  Currently active thread
  */
-extern volatile thread_t *sched_active_thread;
+extern volatile riot_thread_t *sched_active_thread;
 
 /**
  *  Number of running (non-terminated) threads

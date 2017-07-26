@@ -29,7 +29,7 @@
 
 static void time_evt(void *arg)
 {
-    thread_flags_set((thread_t *)arg, 0x1);
+    thread_flags_set((riot_thread_t *)arg, 0x1);
 }
 
 int main(void)
